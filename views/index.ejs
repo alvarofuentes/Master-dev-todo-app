@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestor de Tareas</title>
+    <link rel="stylesheet" href="/css/tailwind.css" />
+  </head>
+  <body class="min-h-screen bg-slate-100 text-slate-900">
+    <main class="mx-auto flex min-h-screen max-w-3xl items-center justify-center px-4 py-10">
+      <section class="w-full rounded-xl bg-white p-6 shadow-lg sm:p-10">
+        <header class="mb-8">
+          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">To-Do List</p>
+          <h1 class="mt-2 text-3xl font-bold text-slate-900 sm:text-4xl">Gestiona tus tareas</h1>
+          <p class="mt-2 text-sm text-slate-500">
+            Mantén el foco con una lista clara de pendientes y tareas completadas.
+          </p>
+        </header>
+
+        <form class="flex flex-col gap-3 sm:flex-row" action="/tasks" method="POST">
+          <input
+            class="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            type="text"
+            name="title"
+            placeholder="Añade una nueva tarea"
+            required
+          />
+          <button
+            class="rounded-lg bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-indigo-700"
+            type="submit"
+          >
+            Agregar
+          </button>
+        </form>
+
+        <div class="mt-8 space-y-4">
+          <% if (tasks.length === 0) { %>
+          <div class="rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+            No hay tareas todavía. ¡Empieza agregando una!
+          </div>
+          <% } %>
+
+          <% tasks.forEach((task) => { %>
+          <article
+            class="flex flex-col gap-4 rounded-xl border border-slate-100 bg-white px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between"
+          >
+            <div class="flex items-start gap-3">
+              <form action="/tasks/<%= task.id %>/toggle" method="POST">
+                <button
+                  type="submit"
+                  class="mt-1 flex h-6 w-6 items-center justify-center rounded-full border-2 transition hover:border-indigo-500 <%= task.completed ? 'border-indigo-500 bg-indigo-500' : 'border-slate-300 bg-white' %>"
+                  aria-label="Marcar tarea"
+                >
+                  <% if (task.completed) { %>
+                  <span class="block h-2.5 w-2.5 rounded-full bg-white"></span>
+                  <% } %>
+                </button>
+              </form>
+              <div>
+                <h2 class="text-sm font-semibold text-slate-900 <%= task.completed ? 'line-through text-slate-400' : '' %>">
+                  <%= task.title %>
+                </h2>
+                <p class="text-xs text-slate-400">
+                  <%= task.completed ? 'Completada' : 'Pendiente' %>
+                </p>
+              </div>
+            </div>
+            <form action="/tasks/<%= task.id %>/delete" method="POST">
+              <button
+                type="submit"
+                class="inline-flex items-center justify-center rounded-lg border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-500 transition hover:border-rose-200 hover:text-rose-500"
+              >
+                Eliminar
+              </button>
+            </form>
+          </article>
+          <% }) %>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
