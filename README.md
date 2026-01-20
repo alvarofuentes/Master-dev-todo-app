@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Gestor de Tareas (Node.js + Express)
 
-## Getting Started
+Esta aplicación es un gestor de tareas (Todo List) construido con Node.js, Express y EJS para el renderizado, con estilos modernos utilizando Tailwind CSS.
 
-First, run the development server:
+## Requisitos Previos
+
+- Node.js (v18 o superior)
+- npm
+
+## Instalación
+
+1. Clona el repositorio si no lo has hecho.
+2. Instala las dependencias:
+   ```bash
+   npm install
+   ```
+
+## Ejecución
+
+Para iniciar la aplicación en modo desarrollo (con recarga automática y compilación de CSS):
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+La aplicación estará disponible en [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Pruebas (Tests)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Se han implementado tests unitarios y de integración para asegurar el correcto funcionamiento del modelo y las rutas:
 
-## Learn More
+```bash
+npm test
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Manual de Uso
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Este manual describe cómo administrar tus tareas utilizando la aplicación.
 
-## Deploy on Vercel
+## 1. Interfaz Principal
+Al abrir la aplicación, verás una interfaz limpia con un encabezado que indica "Gestiona tus tareas" y un campo de entrada para agregar nuevas tareas.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 2. Agregar una Tarea
+1. Escribe el título de tu tarea en el campo de texto que dice **"Añade una nueva tarea"**.
+2. Haz clic en el botón **"Agregar"** o presiona la tecla `Enter`.
+3. La tarea aparecerá inmediatamente en la lista superior (las más nuevas aparecen primero).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 3. Marcar una Tarea como Completada
+1. Ubica la tarea que deseas completar.
+2. Haz clic en el **círculo** a la izquierda del título de la tarea.
+3. El título de la tarea se tachará y el estado cambiará a **"Completada"**.
+4. Puedes desmarcarla haciendo clic nuevamente en el círculo.
+
+## 4. Eliminar una Tarea
+1. Ubica la tarea que deseas borrar.
+2. Haz clic en el botón **"Eliminar"** situado a la derecha de la tarea.
+3. La tarea desaparecerá permanentemente de la lista.
+
+---
+
+## Estructura del Proyecto (Versión Node.js)
+
+- `app.js`: Punto de entrada del servidor Express.
+- `src/models/taskModel.js`: Lógica de datos y almacenamiento en memoria.
+- `src/controllers/taskController.js`: Lógica de manejo de peticiones.
+- `src/routes/taskRoutes.js`: Definición de rutas (endpoints).
+- `views/index.ejs`: Plantilla de la interfaz de usuario.
+- `tests/`: Directorio con las pruebas del sistema.

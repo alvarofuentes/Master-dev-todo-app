@@ -30,9 +30,14 @@ const deleteTask = (id) => {
   return null;
 };
 
+const clearTasks = () => {
+  tasks.length = 0;
+};
+
 module.exports = {
   getAllTasks,
   addTask,
   toggleTask,
   deleteTask,
+  clearTasks,
 };
