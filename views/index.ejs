@@ -1,76 +1,113 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gestor de Tareas</title>
     <link rel="stylesheet" href="/css/tailwind.css" />
+    <style>
+      body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+      .layout-narrow { max-width: 500px !important; }
+      .layout-wide { max-width: 1200px !important; }
+      [v-cloak] { display: none; }
+    </style>
+    <script>
+      // Apply theme and layout before content loads to prevent flicker
+      const theme = localStorage.getItem('theme') || 'light';
+      const layout = localStorage.getItem('layout') || 'narrow';
+      document.documentElement.className = theme;
+      window.initialLayout = layout;
+    </script>
   </head>
-  <body class="min-h-screen bg-slate-100 text-slate-900">
-    <main class="mx-auto flex min-h-screen max-w-3xl items-center justify-center px-4 py-10">
-      <section class="w-full rounded-xl bg-white p-6 shadow-lg sm:p-10">
-        <header class="mb-8">
-          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">To-Do List</p>
-          <h1 class="mt-2 text-3xl font-bold text-slate-900 sm:text-4xl">Gestiona tus tareas</h1>
-          <p class="mt-2 text-sm text-slate-500">
-            Mantén el foco con una lista clara de pendientes y tareas completadas.
+  <body class="min-h-screen bg-white transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
+    <nav class="sticky top-0 z-50 border-b border-slate-100 bg-white/80 backdrop-blur-md dark:border-slate-800 dark:bg-slate-950/80">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
+        <div class="flex items-center gap-2">
+          <div class="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold">T</div>
+          <span class="font-bold tracking-tight text-slate-900 dark:text-white">TodoApp</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <!-- Layout Toggle -->
+          <button id="layoutToggle" class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-900" title="Alternar ancho">
+            <svg id="narrowIcon" class="hidden h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>
+            <svg id="wideIcon" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4H4m0 0v4m0-4l5 5m7-5h4m0 0v4m0-4l-5 5M8 20H4m0 0v-4m0 4l5-5m7 5h4m0 0v-4m0 4l-5-5" /></svg>
+          </button>
+          <!-- Theme Toggle -->
+          <button id="themeToggle" class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-900" title="Cambiar tema">
+            <svg id="sunIcon" class="hidden h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            <svg id="moonIcon" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <main class="py-12">
+      <section id="mainContainer" class="mx-auto w-full px-4 transition-all duration-500 ease-in-out">
+        <header class="mb-10 text-center">
+          <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-5xl">
+            Tus Pendientes
+          </h1>
+          <p class="mt-3 text-slate-500 dark:text-slate-400">
+            Organiza tu día con simplicidad y elegancia.
           </p>
         </header>
 
-        <form class="flex flex-col gap-3 sm:flex-row" action="/tasks" method="POST">
-          <input
-            class="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-            type="text"
-            name="title"
-            placeholder="Añade una nueva tarea"
-            required
-          />
-          <button
-            class="rounded-lg bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-indigo-700"
-            type="submit"
-          >
-            Agregar
-          </button>
-        </form>
+        <div class="mb-12">
+          <form class="relative group" action="/tasks" method="POST">
+            <input
+              class="w-full rounded-2xl border border-slate-200 bg-white px-6 py-5 pr-32 text-lg shadow-sm transition-all focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-800 dark:bg-slate-900 dark:text-white dark:focus:border-indigo-400"
+              type="text"
+              name="title"
+              placeholder="¿Qué sigue en tu lista?"
+              required
+              autofocus
+            />
+            <button
+              class="absolute right-2 top-2 bottom-2 rounded-xl bg-indigo-600 px-6 font-bold text-white shadow-lg transition-transform hover:scale-105 active:scale-95 dark:bg-indigo-500"
+              type="submit"
+            >
+              Añadir
+            </button>
+          </form>
+        </div>
 
-        <div class="mt-8 space-y-4">
+        <div class="space-y-3">
           <% if (tasks.length === 0) { %>
-          <div class="rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
-            No hay tareas todavía. ¡Empieza agregando una!
+          <div class="flex flex-col items-center justify-center py-20 text-center">
+            <div class="mb-4 rounded-full bg-slate-50 p-6 dark:bg-slate-900">
+              <svg class="h-12 w-12 text-slate-300 dark:text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 001-1.732a2 2 0 00-2 0H9z" />
+              </svg>
+            </div>
+            <h3 class="text-lg font-medium text-slate-900 dark:text-white">Todo despejado</h3>
+            <p class="text-slate-500 dark:text-slate-400">No tienes tareas para hoy. ¡Disfruta tu tiempo!</p>
           </div>
           <% } %>
 
           <% tasks.forEach((task) => { %>
-          <article
-            class="flex flex-col gap-4 rounded-xl border border-slate-100 bg-white px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between"
-          >
-            <div class="flex items-start gap-3">
+          <article class="group flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-4 shadow-sm transition-all hover:border-slate-200 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700">
+            <div class="flex items-center gap-4">
               <form action="/tasks/<%= task.id %>/toggle" method="POST">
                 <button
                   type="submit"
-                  class="mt-1 flex h-6 w-6 items-center justify-center rounded-full border-2 transition hover:border-indigo-500 <%= task.completed ? 'border-indigo-500 bg-indigo-500' : 'border-slate-300 bg-white' %>"
+                  class="flex h-7 w-7 items-center justify-center rounded-full border-2 transition-all hover:scale-110 <%= task.completed ? 'border-emerald-500 bg-emerald-500 text-white' : 'border-slate-200 bg-transparent dark:border-slate-700' %>"
                   aria-label="Marcar tarea"
                 >
                   <% if (task.completed) { %>
-                  <span class="block h-2.5 w-2.5 rounded-full bg-white"></span>
+                  <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
                   <% } %>
                 </button>
               </form>
-              <div>
-                <h2 class="text-sm font-semibold text-slate-900 <%= task.completed ? 'line-through text-slate-400' : '' %>">
-                  <%= task.title %>
-                </h2>
-                <p class="text-xs text-slate-400">
-                  <%= task.completed ? 'Completada' : 'Pendiente' %>
-                </p>
-              </div>
+              <h2 class="text-base font-medium transition-all <%= task.completed ? 'line-through text-slate-400 dark:text-slate-600' : 'text-slate-800 dark:text-slate-200' %>">
+                <%= task.title %>
+              </h2>
             </div>
-            <form action="/tasks/<%= task.id %>/delete" method="POST">
+            <form action="/tasks/<%= task.id %>/delete" method="POST" class="opacity-0 transition-opacity group-hover:opacity-100">
               <button
                 type="submit"
-                class="inline-flex items-center justify-center rounded-lg border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-500 transition hover:border-rose-200 hover:text-rose-500"
+                class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-500/10"
               >
-                Eliminar
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
               </button>
             </form>
           </article>
@@ -78,5 +115,55 @@
         </div>
       </section>
     </main>
+
+    <script>
+      const doc = document.documentElement;
+      const themeToggle = document.getElementById('themeToggle');
+      const layoutToggle = document.getElementById('layoutToggle');
+      const container = document.getElementById('mainContainer');
+      const sunIcon = document.getElementById('sunIcon');
+      const moonIcon = document.getElementById('moonIcon');
+      const wideIcon = document.getElementById('wideIcon');
+      const narrowIcon = document.getElementById('narrowIcon');
+
+      function updateTheme(theme) {
+        doc.className = theme;
+        localStorage.setItem('theme', theme);
+        if (theme === 'dark') {
+          sunIcon.classList.remove('hidden');
+          moonIcon.classList.add('hidden');
+        } else {
+          sunIcon.classList.add('hidden');
+          moonIcon.classList.remove('hidden');
+        }
+      }
+
+      function updateLayout(layout) {
+        container.classList.remove('layout-narrow', 'layout-wide');
+        container.classList.add('layout-' + layout);
+        localStorage.setItem('layout', layout);
+        if (layout === 'wide') {
+          narrowIcon.classList.remove('hidden');
+          wideIcon.classList.add('hidden');
+        } else {
+          narrowIcon.classList.add('hidden');
+          wideIcon.classList.remove('hidden');
+        }
+      }
+
+      themeToggle.addEventListener('click', () => {
+        const current = localStorage.getItem('theme') || 'light';
+        updateTheme(current === 'light' ? 'dark' : 'light');
+      });
+
+      layoutToggle.addEventListener('click', () => {
+        const current = localStorage.getItem('layout') || 'narrow';
+        updateLayout(current === 'narrow' ? 'wide' : 'narrow');
+      });
+
+      // Init
+      updateTheme(theme);
+      updateLayout(window.initialLayout);
+    </script>
   </body>
 </html>

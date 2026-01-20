@@ -19,7 +19,7 @@ describe('Task Routes', () => {
     test('GET / should render index', async () => {
         const res = await request(app).get('/');
         expect(res.statusCode).toBe(200);
-        expect(res.text).toContain('Gestiona tus tareas');
+        expect(res.text).toContain('Tus Pendientes');
     });
 
     test('POST /tasks should create a task', async () => {
