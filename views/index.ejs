@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="light">
+<html lang="es" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,90 +7,85 @@
     <link rel="stylesheet" href="/css/tailwind.css" />
     <style>
       body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-      .layout-narrow { max-width: 500px !important; }
-      .layout-wide { max-width: 1200px !important; }
+      .layout-narrow { max-width: 520px !important; }
+      .layout-wide { max-width: 1180px !important; }
       [v-cloak] { display: none; }
     </style>
     <script>
-      // Apply theme and layout before content loads to prevent flicker
-      const theme = localStorage.getItem('theme') || 'light';
+      // Apply layout before content loads to prevent flicker
       const layout = localStorage.getItem('layout') || 'narrow';
-      document.documentElement.className = theme;
       window.initialLayout = layout;
     </script>
   </head>
-  <body class="min-h-screen bg-white transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
-    <nav class="sticky top-0 z-50 border-b border-slate-100 bg-white/80 backdrop-blur-md dark:border-slate-800 dark:bg-slate-950/80">
-      <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-        <div class="flex items-center gap-2">
-          <div class="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold">T</div>
-          <span class="font-bold tracking-tight text-slate-900 dark:text-white">TodoApp</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <!-- Layout Toggle -->
-          <button id="layoutToggle" class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-900" title="Alternar ancho">
-            <svg id="narrowIcon" class="hidden h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>
-            <svg id="wideIcon" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4H4m0 0v4m0-4l5 5m7-5h4m0 0v4m0-4l-5 5M8 20H4m0 0v-4m0 4l5-5m7 5h4m0 0v-4m0 4l-5-5" /></svg>
-          </button>
-          <!-- Theme Toggle -->
-          <button id="themeToggle" class="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-900" title="Cambiar tema">
-            <svg id="sunIcon" class="hidden h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-            <svg id="moonIcon" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
-          </button>
-        </div>
-      </div>
-    </nav>
-
-    <main class="py-12">
+  <body class="min-h-screen bg-slate-950 text-slate-100 transition-colors duration-300">
+    <main class="py-10 sm:py-14">
       <section id="mainContainer" class="mx-auto w-full px-4 transition-all duration-500 ease-in-out">
-        <header class="mb-10 text-center">
-          <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-5xl">
-            Tus Pendientes
-          </h1>
-          <p class="mt-3 text-slate-500 dark:text-slate-400">
-            Organiza tu día con simplicidad y elegancia.
-          </p>
+        <% const activeCount = tasks.filter((task) => !task.completed).length; %>
+        <header class="mb-8 flex items-center justify-between rounded-3xl border border-slate-800/70 bg-slate-900/70 px-6 py-5 shadow-xl shadow-slate-950/40 backdrop-blur">
+          <div>
+            <p class="text-sm uppercase tracking-[0.2em] text-slate-400">My Day</p>
+            <h1 class="mt-1 text-2xl font-semibold text-white sm:text-3xl">Gestor de tareas</h1>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="layoutToggle" class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-800/80 bg-slate-900 text-slate-300 transition hover:border-slate-600 hover:text-white" title="Alternar ancho">
+              <svg id="narrowIcon" class="hidden h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>
+              <svg id="wideIcon" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4H4m0 0v4m0-4l5 5m7-5h4m0 0v4m0-4l-5 5M8 20H4m0 0v-4m0 4l5-5m7 5h4m0 0v-4m0 4l-5-5" /></svg>
+            </button>
+            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-500/20 text-indigo-200">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            </div>
+          </div>
         </header>
 
-        <div class="mb-12">
-          <form class="relative group" action="/tasks" method="POST">
+        <div class="mb-10 rounded-3xl border border-slate-800/60 bg-slate-900/60 p-5 shadow-xl shadow-slate-950/40">
+          <form class="relative" action="/tasks" method="POST">
             <input
-              class="w-full rounded-2xl border border-slate-200 bg-white px-6 py-5 pr-32 text-lg shadow-sm transition-all focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-800 dark:bg-slate-900 dark:text-white dark:focus:border-indigo-400"
+              class="w-full rounded-2xl border border-slate-700/80 bg-slate-950/70 px-5 py-4 pr-36 text-base text-white shadow-inner shadow-slate-950/40 transition placeholder:text-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/20"
               type="text"
               name="title"
-              placeholder="¿Qué sigue en tu lista?"
+              placeholder="What needs to be done?"
               required
               autofocus
             />
             <button
-              class="absolute right-2 top-2 bottom-2 rounded-xl bg-indigo-600 px-6 font-bold text-white shadow-lg transition-transform hover:scale-105 active:scale-95 dark:bg-indigo-500"
+              class="absolute right-2 top-2 bottom-2 flex items-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/30 transition-transform hover:scale-[1.02] active:scale-95"
               type="submit"
             >
-              Añadir
+              <span class="flex h-5 w-5 items-center justify-center rounded-full border border-white/40">
+                <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+              </span>
+              Save Task
             </button>
           </form>
         </div>
 
-        <div class="space-y-3">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-lg font-semibold text-white">Active Tasks</h2>
+          <span class="rounded-full border border-indigo-500/30 bg-indigo-500/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-indigo-200">
+            <%= activeCount %> tasks
+          </span>
+        </div>
+
+        <div class="space-y-4">
           <% if (tasks.length === 0) { %>
-          <div class="flex flex-col items-center justify-center py-20 text-center">
-            <div class="mb-4 rounded-full bg-slate-50 p-6 dark:bg-slate-900">
-              <svg class="h-12 w-12 text-slate-300 dark:text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div class="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-800/80 bg-slate-900/40 py-16 text-center">
+            <div class="mb-4 rounded-full bg-slate-900 p-5">
+              <svg class="h-10 w-10 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 001-1.732a2 2 0 00-2 0H9z" />
               </svg>
             </div>
-            <h3 class="text-lg font-medium text-slate-900 dark:text-white">Todo despejado</h3>
-            <p class="text-slate-500 dark:text-slate-400">No tienes tareas para hoy. ¡Disfruta tu tiempo!</p>
+            <h3 class="text-lg font-semibold text-white">Todo despejado</h3>
+            <p class="text-sm text-slate-400">No tienes tareas para hoy. ¡Disfruta tu tiempo!</p>
           </div>
           <% } %>
 
           <% tasks.forEach((task) => { %>
-          <article class="group flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-4 shadow-sm transition-all hover:border-slate-200 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700">
+          <article class="group flex items-center justify-between rounded-2xl border border-slate-800/80 bg-slate-900/70 p-4 shadow-lg shadow-slate-950/30 transition-all hover:border-slate-700">
             <div class="flex items-center gap-4">
               <form action="/tasks/<%= task.id %>/toggle" method="POST">
                 <button
                   type="submit"
-                  class="flex h-7 w-7 items-center justify-center rounded-full border-2 transition-all hover:scale-110 <%= task.completed ? 'border-emerald-500 bg-emerald-500 text-white' : 'border-slate-200 bg-transparent dark:border-slate-700' %>"
+                  class="flex h-7 w-7 items-center justify-center rounded-full border-2 transition-all hover:scale-110 <%= task.completed ? 'border-indigo-500 bg-indigo-500 text-white' : 'border-slate-600 bg-slate-900 text-transparent' %>"
                   aria-label="Marcar tarea"
                 >
                   <% if (task.completed) { %>
@@ -98,14 +93,19 @@
                   <% } %>
                 </button>
               </form>
-              <h2 class="text-base font-medium transition-all <%= task.completed ? 'line-through text-slate-400 dark:text-slate-600' : 'text-slate-800 dark:text-slate-200' %>">
-                <%= task.title %>
-              </h2>
+              <div>
+                <h2 class="text-base font-semibold transition-all <%= task.completed ? 'line-through text-slate-500' : 'text-white' %>">
+                  <%= task.title %>
+                </h2>
+                <p class="text-xs uppercase tracking-[0.15em] <%= task.completed ? 'text-slate-600' : 'text-indigo-300' %>">
+                  <%= task.completed ? 'Completada' : 'Pendiente' %>
+                </p>
+              </div>
             </div>
-            <form action="/tasks/<%= task.id %>/delete" method="POST" class="opacity-0 transition-opacity group-hover:opacity-100">
+            <form action="/tasks/<%= task.id %>/delete" method="POST" class="opacity-100 transition-opacity">
               <button
                 type="submit"
-                class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-500/10"
+                class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-rose-500/10 hover:text-rose-300"
               >
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
               </button>
@@ -117,26 +117,10 @@
     </main>
 
     <script>
-      const doc = document.documentElement;
-      const themeToggle = document.getElementById('themeToggle');
       const layoutToggle = document.getElementById('layoutToggle');
       const container = document.getElementById('mainContainer');
-      const sunIcon = document.getElementById('sunIcon');
-      const moonIcon = document.getElementById('moonIcon');
       const wideIcon = document.getElementById('wideIcon');
       const narrowIcon = document.getElementById('narrowIcon');
-
-      function updateTheme(theme) {
-        doc.className = theme;
-        localStorage.setItem('theme', theme);
-        if (theme === 'dark') {
-          sunIcon.classList.remove('hidden');
-          moonIcon.classList.add('hidden');
-        } else {
-          sunIcon.classList.add('hidden');
-          moonIcon.classList.remove('hidden');
-        }
-      }
 
       function updateLayout(layout) {
         container.classList.remove('layout-narrow', 'layout-wide');
@@ -151,18 +135,12 @@
         }
       }
 
-      themeToggle.addEventListener('click', () => {
-        const current = localStorage.getItem('theme') || 'light';
-        updateTheme(current === 'light' ? 'dark' : 'light');
-      });
-
       layoutToggle.addEventListener('click', () => {
         const current = localStorage.getItem('layout') || 'narrow';
         updateLayout(current === 'narrow' ? 'wide' : 'narrow');
       });
 
       // Init
-      updateTheme(theme);
       updateLayout(window.initialLayout);
     </script>
   </body>

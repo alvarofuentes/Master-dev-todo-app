@@ -6,12 +6,6 @@
 .relative {
   position: relative;
 }
-.sticky {
-  position: sticky;
-}
-.z-50 {
-  z-index: 50;
-}
 .container {
   width: 100%;
 }
@@ -53,19 +47,30 @@
   border-style: var(--tw-border-style);
   border-width: 2px;
 }
-.border-b {
-  border-bottom-style: var(--tw-border-style);
-  border-bottom-width: 1px;
+.border-dashed {
+  --tw-border-style: dashed;
+  border-style: dashed;
 }
 .border-solid {
   --tw-border-style: solid;
   border-style: solid;
 }
-.bg-transparent {
-  background-color: transparent;
-}
 .text-center {
   text-align: center;
+}
+.tracking-\[0\.2em\] {
+  --tw-tracking: 0.2em;
+  letter-spacing: 0.2em;
+}
+.tracking-\[0\.15em\] {
+  --tw-tracking: 0.15em;
+  letter-spacing: 0.15em;
+}
+.text-transparent {
+  color: transparent;
+}
+.uppercase {
+  text-transform: uppercase;
 }
 .line-through {
   text-decoration-line: line-through;
@@ -74,8 +79,13 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-.opacity-0 {
-  opacity: 0%;
+.opacity-100 {
+  opacity: 100%;
+}
+.transition {
+  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events;
+  transition-timing-function: var(--tw-ease, ease);
+  transition-duration: var(--tw-duration, 0s);
 }
 .transition-all {
   transition-property: all;
@@ -105,23 +115,6 @@
   --tw-duration: 500ms;
   transition-duration: 500ms;
 }
-.group-hover\:opacity-100 {
-  &:is(:where(.group):hover *) {
-    @media (hover: hover) {
-      opacity: 100%;
-    }
-  }
-}
-.hover\:scale-105 {
-  &:hover {
-    @media (hover: hover) {
-      --tw-scale-x: 105%;
-      --tw-scale-y: 105%;
-      --tw-scale-z: 105%;
-      scale: var(--tw-scale-x) var(--tw-scale-y);
-    }
-  }
-}
 .hover\:scale-110 {
   &:hover {
     @media (hover: hover) {
@@ -129,6 +122,13 @@
       --tw-scale-y: 110%;
       --tw-scale-z: 110%;
       scale: var(--tw-scale-x) var(--tw-scale-y);
+    }
+  }
+}
+.hover\:scale-\[1\.02\] {
+  &:hover {
+    @media (hover: hover) {
+      scale: 1.02;
     }
   }
 }
@@ -207,6 +207,10 @@
   syntax: "*";
   inherits: false;
   initial-value: solid;
+}
+@property --tw-tracking {
+  syntax: "*";
+  inherits: false;
 }
 @property --tw-duration {
   syntax: "*";
@@ -349,6 +353,7 @@
   @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
     *, ::before, ::after, ::backdrop {
       --tw-border-style: solid;
+      --tw-tracking: initial;
       --tw-duration: initial;
       --tw-scale-x: 1;
       --tw-scale-y: 1;
