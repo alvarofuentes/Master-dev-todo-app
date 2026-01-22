@@ -7,9 +7,9 @@ const showTasks = (req, res) => {
 };
 
 const createTask = (req, res) => {
-  const { title } = req.body;
+  const { title, priority } = req.body;
   if (title && title.trim()) {
-    taskModel.addTask(title);
+    taskModel.addTask(title, priority === 'on' || priority === true);
   }
   res.redirect('/');
 };

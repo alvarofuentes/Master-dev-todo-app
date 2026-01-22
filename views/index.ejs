@@ -1,147 +1,301 @@
 <!DOCTYPE html>
 <html lang="es" class="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gestor de Tareas</title>
-    <link rel="stylesheet" href="/css/tailwind.css" />
-    <style>
-      body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-      .layout-narrow { max-width: 520px !important; }
-      .layout-wide { max-width: 1180px !important; }
-      [v-cloak] { display: none; }
-    </style>
-    <script>
-      // Apply layout before content loads to prevent flicker
-      const layout = localStorage.getItem('layout') || 'narrow';
-      window.initialLayout = layout;
-    </script>
-  </head>
-  <body class="min-h-screen bg-slate-950 text-slate-100 transition-colors duration-300">
-    <main class="py-10 sm:py-14">
-      <section id="mainContainer" class="mx-auto w-full px-4 transition-all duration-500 ease-in-out">
-        <% const activeCount = tasks.filter((task) => !task.completed).length; %>
-        <header class="mb-8 flex items-center justify-between rounded-3xl border border-slate-800/70 bg-slate-900/70 px-6 py-5 shadow-xl shadow-slate-950/40 backdrop-blur">
-          <div>
-            <p class="text-sm uppercase tracking-[0.2em] text-slate-400">My Day</p>
-            <h1 class="mt-1 text-2xl font-semibold text-white sm:text-3xl">Gestor de tareas</h1>
-          </div>
-          <div class="flex items-center gap-2">
-            <button id="layoutToggle" class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-800/80 bg-slate-900 text-slate-300 transition hover:border-slate-600 hover:text-white" title="Alternar ancho">
-              <svg id="narrowIcon" class="hidden h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>
-              <svg id="wideIcon" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4H4m0 0v4m0-4l5 5m7-5h4m0 0v4m0-4l-5 5M8 20H4m0 0v-4m0 4l5-5m7 5h4m0 0v-4m0 4l-5-5" /></svg>
-            </button>
-            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-500/20 text-indigo-200">
-              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-            </div>
-          </div>
-        </header>
 
-        <div class="mb-10 rounded-3xl border border-slate-800/60 bg-slate-900/60 p-5 shadow-xl shadow-slate-950/40">
-          <form class="relative" action="/tasks" method="POST">
-            <input
-              class="w-full rounded-2xl border border-slate-700/80 bg-slate-950/70 px-5 py-4 pr-36 text-base text-white shadow-inner shadow-slate-950/40 transition placeholder:text-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/20"
-              type="text"
-              name="title"
-              placeholder="What needs to be done?"
-              required
-              autofocus
-            />
-            <button
-              class="absolute right-2 top-2 bottom-2 flex items-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/30 transition-transform hover:scale-[1.02] active:scale-95"
-              type="submit"
-            >
-              <span class="flex h-5 w-5 items-center justify-center rounded-full border border-white/40">
-                <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-              </span>
-              Save Task
-            </button>
-          </form>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Today - Gestor de Tareas</title>
+  <link rel="stylesheet" href="/css/tailwind.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .app-container {
+      width: 100%;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      margin: 0 auto;
+      position: relative;
+      background-color: #0b0e14;
+    }
+
+    .layout-narrow {
+      max-width: 380px;
+    }
+
+    .layout-wide {
+      max-width: 800px;
+    }
+
+    .task-card {
+      background-color: #171d29;
+      transition: all 0.2s ease;
+    }
+
+    .task-card:hover {
+      background-color: #1c2433;
+    }
+
+    .checkbox-custom {
+      width: 24px;
+      height: 24px;
+      border: 2px solid #2d3748;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .checkbox-checked {
+      background-color: #2563eb;
+      border-color: #2563eb;
+    }
+
+    .input-glow:focus-within {
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+      border-color: rgba(37, 99, 235, 0.5);
+    }
+
+    /* Hide scrollbar */
+    ::-webkit-scrollbar {
+      width: 0px;
+      background: transparent;
+    }
+  </style>
+  <script>
+    // Apply layout before content loads
+    const savedLayout = localStorage.getItem('app-layout') || 'narrow';
+    document.documentElement.dataset.layout = savedLayout;
+  </script>
+</head>
+
+<body class="bg-[#0b0e14]">
+
+  <div id="mainApp" class="app-container layout-narrow flex flex-col min-h-screen relative overflow-x-hidden">
+
+    <!-- Top Header -->
+    <header class="pt-12 px-8 flex justify-between items-center mb-8">
+      <div class="flex items-center gap-3">
+        <div class="bg-blue-600 rounded-lg p-1">
+          <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+          </svg>
         </div>
+        <h1 class="text-3xl font-bold text-white tracking-tight">Today</h1>
+      </div>
+      <div class="flex items-center gap-4">
+        <button id="layoutToggle" class="text-gray-500 hover:text-white transition" title="Cambiar ancho">
+          <svg id="narrowIcon" class="hidden w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+          </svg>
+          <svg id="wideIcon" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 4H4m0 0v4m0-4l5 5m7-5h4m0 0v4m0-4l-5 5M8 20H4m0 0v-4m0 4l5-5m7 5h4m0 0v-4m0 4l-5-5" />
+          </svg>
+        </button>
+        <button class="text-gray-500 hover:text-white transition">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+          </svg>
+        </button>
+      </div>
+    </header>
 
-        <div class="mb-4 flex items-center justify-between">
-          <h2 class="text-lg font-semibold text-white">Active Tasks</h2>
-          <span class="rounded-full border border-indigo-500/30 bg-indigo-500/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-indigo-200">
-            <%= activeCount %> tasks
-          </span>
-        </div>
+    <!-- Task Input Form -->
+    <section class="px-6 mb-10">
+      <form action="/tasks" method="POST"
+        class="input-glow relative flex items-center bg-[#171d29] border border-gray-800 rounded-2xl p-4 transition-all">
+        <input type="text" name="title" placeholder="What needs to be done?" required style="color: white !important;"
+          class="bg-transparent border-none outline-none text-white placeholder-gray-500 w-full text-lg pr-12 focus:ring-0" />
+        <!-- Mini toggle for priority -->
+        <label class="absolute right-14 cursor-pointer text-gray-600 hover:text-yellow-500 transition"
+          title="Mark as priority">
+          <input type="checkbox" name="priority" class="hidden peer">
+          <svg class="w-6 h-6 peer-checked:text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+          </svg>
+        </label>
+        <button type="submit"
+          class="bg-blue-600 hover:bg-blue-500 text-white rounded-full p-2 transition shadow-lg shadow-blue-900/20">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" />
+          </svg>
+        </button>
+      </form>
+    </section>
 
-        <div class="space-y-4">
-          <% if (tasks.length === 0) { %>
-          <div class="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-800/80 bg-slate-900/40 py-16 text-center">
-            <div class="mb-4 rounded-full bg-slate-900 p-5">
-              <svg class="h-10 w-10 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 001-1.732a2 2 0 00-2 0H9z" />
-              </svg>
+    <!-- Main Content Containers -->
+    <main class="px-6 flex-grow pb-24">
+      <% const priorityTasks=tasks.filter(t=> t.priority && !t.completed);
+        const otherTasks = tasks.filter(t => !t.priority || t.completed);
+        const activeCount = tasks.filter(t => !t.completed).length;
+        %>
+
+        <!-- PRIORITY Section -->
+        <% if (priorityTasks.length> 0) { %>
+          <div class="mb-8">
+            <h2 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 px-2">Priority</h2>
+            <div class="space-y-3">
+              <% priorityTasks.forEach(task=> { %>
+                <article class="task-card rounded-2xl p-5 flex items-center justify-between group">
+                  <div class="flex items-center gap-4 flex-grow cursor-pointer"
+                    onclick="this.nextElementSibling.submit()">
+                    <div class="checkbox-custom <%= task.completed ? 'checkbox-checked' : '' %>">
+                      <% if (task.completed) { %>
+                        <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <% } %>
+                    </div>
+                    <span class="text-gray-200 font-medium truncate max-w-[200px]">
+                      <%= task.title %>
+                    </span>
+                  </div>
+                  <form action="/tasks/<%= task.id %>/toggle" method="POST" class="hidden"></form>
+
+                  <div class="flex items-center gap-2">
+                    <form action="/tasks/<%= task.id %>/delete" method="POST">
+                      <button type="submit"
+                        class="text-gray-700 hover:text-red-500 transition opacity-0 group-hover:opacity-100">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </form>
+                  </div>
+                </article>
+                <% }) %>
             </div>
-            <h3 class="text-lg font-semibold text-white">Todo despejado</h3>
-            <p class="text-sm text-slate-400">No tienes tareas para hoy. ¡Disfruta tu tiempo!</p>
           </div>
           <% } %>
 
-          <% tasks.forEach((task) => { %>
-          <article class="group flex items-center justify-between rounded-2xl border border-slate-800/80 bg-slate-900/70 p-4 shadow-lg shadow-slate-950/30 transition-all hover:border-slate-700">
-            <div class="flex items-center gap-4">
-              <form action="/tasks/<%= task.id %>/toggle" method="POST">
-                <button
-                  type="submit"
-                  class="flex h-7 w-7 items-center justify-center rounded-full border-2 transition-all hover:scale-110 <%= task.completed ? 'border-indigo-500 bg-indigo-500 text-white' : 'border-slate-600 bg-slate-900 text-transparent' %>"
-                  aria-label="Marcar tarea"
-                >
-                  <% if (task.completed) { %>
-                  <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+            <!-- EVERYTHING ELSE Section -->
+            <div class="mb-8">
+              <h2 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 px-2">Everything Else</h2>
+              <div class="space-y-3">
+                <% if (otherTasks.length===0 && priorityTasks.length===0) { %>
+                  <div class="text-center py-10 opacity-40">
+                    <p class="text-gray-400 italic">No tasks yet. Add one above!</p>
+                  </div>
                   <% } %>
-                </button>
-              </form>
-              <div>
-                <h2 class="text-base font-semibold transition-all <%= task.completed ? 'line-through text-slate-500' : 'text-white' %>">
-                  <%= task.title %>
-                </h2>
-                <p class="text-xs uppercase tracking-[0.15em] <%= task.completed ? 'text-slate-600' : 'text-indigo-300' %>">
-                  <%= task.completed ? 'Completada' : 'Pendiente' %>
-                </p>
+                    <% otherTasks.forEach(task=> { %>
+                      <article class="task-card rounded-2xl p-5 flex items-center justify-between group">
+                        <div class="flex items-center gap-4 flex-grow cursor-pointer"
+                          onclick="this.nextElementSibling.submit()">
+                          <div class="checkbox-custom <%= task.completed ? 'checkbox-checked' : '' %>">
+                            <% if (task.completed) { %>
+                              <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                  d="M5 13l4 4L19 7" />
+                              </svg>
+                              <% } %>
+                          </div>
+                          <span
+                            class="text-gray-200 font-medium truncate max-w-[200px] <%= task.completed ? 'line-through text-gray-500' : '' %>">
+                            <%= task.title %>
+                          </span>
+                        </div>
+                        <form action="/tasks/<%= task.id %>/toggle" method="POST" class="hidden"></form>
+
+                        <div class="flex items-center gap-2">
+                          <form action="/tasks/<%= task.id %>/delete" method="POST">
+                            <button type="submit"
+                              class="text-gray-700 hover:text-red-500 transition opacity-0 group-hover:opacity-100">
+                              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </button>
+                          </form>
+                        </div>
+                      </article>
+                      <% }) %>
               </div>
             </div>
-            <form action="/tasks/<%= task.id %>/delete" method="POST" class="opacity-100 transition-opacity">
-              <button
-                type="submit"
-                class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-rose-500/10 hover:text-rose-300"
-              >
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-              </button>
-            </form>
-          </article>
-          <% }) %>
-        </div>
-      </section>
     </main>
 
-    <script>
-      const layoutToggle = document.getElementById('layoutToggle');
-      const container = document.getElementById('mainContainer');
-      const wideIcon = document.getElementById('wideIcon');
-      const narrowIcon = document.getElementById('narrowIcon');
+    <!-- Sticky Footer -->
+    <footer id="footer"
+      class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[380px] bg-[#0b0e14]/80 backdrop-blur-lg border-t border-gray-900 px-8 py-6 flex justify-between items-center z-10 transition-all duration-400">
+      <div class="text-gray-500 text-sm font-medium">
+        <%= activeCount %> tasks remaining
+      </div>
+      <div class="flex items-center gap-6">
+        <button class="text-gray-500 hover:text-white transition">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </button>
+        <button class="text-gray-500 hover:text-white transition">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </button>
+      </div>
+    </footer>
 
-      function updateLayout(layout) {
-        container.classList.remove('layout-narrow', 'layout-wide');
-        container.classList.add('layout-' + layout);
-        localStorage.setItem('layout', layout);
-        if (layout === 'wide') {
-          narrowIcon.classList.remove('hidden');
-          wideIcon.classList.add('hidden');
-        } else {
-          narrowIcon.classList.add('hidden');
-          wideIcon.classList.remove('hidden');
-        }
+    <!-- FAB (Floating Action Button) -->
+    <button
+      class="fixed bottom-24 right-8 z-20 bg-blue-600 hover:bg-blue-500 text-white w-14 h-14 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-600/30 transition-transform hover:scale-105 active:scale-95">
+      <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+      </svg>
+    </button>
+
+  </div>
+
+  <script>
+    const layoutToggle = document.getElementById('layoutToggle');
+    const mainApp = document.getElementById('mainApp');
+    const footer = document.getElementById('footer');
+    const wideIcon = document.getElementById('wideIcon');
+    const narrowIcon = document.getElementById('narrowIcon');
+
+    function updateLayout(layout) {
+      mainApp.classList.remove('layout-narrow', 'layout-wide');
+      mainApp.classList.add('layout-' + layout);
+
+      if (footer) {
+        footer.style.maxWidth = layout === 'narrow' ? '380px' : '800px';
       }
 
-      layoutToggle.addEventListener('click', () => {
-        const current = localStorage.getItem('layout') || 'narrow';
-        updateLayout(current === 'narrow' ? 'wide' : 'narrow');
-      });
+      localStorage.setItem('app-layout', layout);
+      if (layout === 'wide') {
+        narrowIcon.classList.remove('hidden');
+        wideIcon.classList.add('hidden');
+      } else {
+        narrowIcon.classList.add('hidden');
+        wideIcon.classList.remove('hidden');
+      }
+    }
 
-      // Init
-      updateLayout(window.initialLayout);
-    </script>
-  </body>
+    layoutToggle.addEventListener('click', () => {
+      const current = mainApp.classList.contains('layout-narrow') ? 'narrow' : 'wide';
+      updateLayout(current === 'narrow' ? 'wide' : 'narrow');
+    });
+
+    // Init
+    updateLayout(localStorage.getItem('app-layout') || 'narrow');
+  </script>
+
+</body>
+
 </html>

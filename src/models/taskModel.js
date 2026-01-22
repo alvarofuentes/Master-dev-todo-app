@@ -4,11 +4,12 @@ const tasks = [];
 
 const getAllTasks = () => tasks;
 
-const addTask = (title) => {
+const addTask = (title, priority = false) => {
   const task = {
     id: randomUUID(),
     title: title.trim(),
     completed: false,
+    priority: !!priority,
   };
   tasks.unshift(task);
   return task;
